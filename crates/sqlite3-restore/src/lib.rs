@@ -8,25 +8,25 @@ use std::{
 
 use nix::{
     fcntl::{fcntl, FcntlArg},
-    libc::{flock, SEEK_SET},
+    libc::{flock, off_t, SEEK_SET},
 };
 use tracing::info;
 
 // Database file lock bytes.
-const PENDING: i64 = 0x40000000;
-const RESERVED: i64 = 0x40000001;
-const SHARED: i64 = 0x40000002;
+const PENDING: off_t = 0x40000000;
+const RESERVED: off_t = 0x40000001;
+const SHARED: off_t = 0x40000002;
 
 // SHM file lock bytes.
-const WRITE: i64 = 120;
-const CKPT: i64 = 121;
-const RECOVER: i64 = 122;
-const READ0: i64 = 123;
-const READ1: i64 = 124;
-const READ2: i64 = 125;
-const READ3: i64 = 126;
-const READ4: i64 = 127;
-const DMS: i64 = 128;
+const WRITE: off_t = 120;
+const CKPT: off_t = 121;
+const RECOVER: off_t = 122;
+const READ0: off_t = 123;
+const READ1: off_t = 124;
+const READ2: off_t = 125;
+const READ3: off_t = 126;
+const READ4: off_t = 127;
+const DMS: off_t = 128;
 
 const MIN_DB_HDR_READ_LEN: usize = 20;
 
@@ -204,8 +204,8 @@ enum LockType {
     Unlock = nix::libc::F_UNLCK as i16,
 }
 
-fn lock(f: &File, l_type: LockType, l_start: i64, timeout: Duration) -> Result<(), Error> {
-    let mut l_len = 1i64;
+fn lock(f: &File, l_type: LockType, l_start: off_t, timeout: Duration) -> Result<(), Error> {
+    let mut l_len: off_t = 1;
 
     if l_start == SHARED {
         l_len = 510;

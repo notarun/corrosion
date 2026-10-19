@@ -15,5 +15,9 @@ rustflags = [
     "--cfg", "tokio_unstable"
 ]
 
+[target.armv7-unknown-linux-gnueabihf]
+linker = "arm-linux-gnueabihf-gcc"
+rustflags = ["--cfg", "tokio_unstable"]
+
 [target.aarch64-apple-darwin]
 rustflags = ["--cfg", "tokio_unstable"]

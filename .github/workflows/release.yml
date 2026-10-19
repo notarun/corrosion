@@ -37,6 +37,8 @@ jobs:
             # This ensures compatibility with systems using 16K pages like Raspberry Pi OS on RPi 5.
             # Without this configuration, the binary may fail with "<jemalloc>: Unsupported system page size".
             jemalloc_page_size: 14
+          - target: armv7-unknown-linux-gnueabihf
+            os: ubuntu-22.04
     runs-on: ${{ matrix.os }}
     env:
       SCCACHE_GHA_ENABLED: "true"
