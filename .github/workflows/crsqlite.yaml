@@ -16,7 +16,11 @@ on:
 
 jobs:
   download:
-    runs-on: ubuntu-latest
+    # Keep libclang 14 available for CR-SQLite's old bindgen.
+    runs-on: ubuntu-22.04
+    env:
+      REPO: superfly
+      TAG: ${{ inputs.tag }}
     steps:
       - name: Checks out repository to runner
         uses: actions/checkout@v4
@@ -24,15 +28,26 @@ jobs:
           fetch-depth: 0
 
       - name: Download crsqlite
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
         run: |
-          INPUT_BRANCH=${{ inputs.branch }}
           if [[ -z "$INPUT_BRANCH" || "$INPUT_BRANCH" == "main" ]]; then
               echo "Please specify a different commit branch, main is not allowed"
               exit 1
           fi
 
-          INPUT_REPO=${{ github.repository_owner }}
-          TAG=${{ inputs.tag }} REPO=${INPUT_REPO} ./.buildkite/download-crsqlite.sh
+          ./.buildkite/download-crsqlite.sh
+
+      - name: Set up ARMv7 build environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential gcc-arm-linux-gnueabihf libc6-dev-armhf-cross libclang-14-dev
+          rustup toolchain install nightly-2023-10-05 --profile minimal \
+            --target armv7-unknown-linux-gnueabihf
+
+      - name: Build crsqlite for ARMv7
+        run: ./.buildkite/build-crsqlite-armv7.sh
 
       - uses: EndBug/add-and-commit@v9
         with:
