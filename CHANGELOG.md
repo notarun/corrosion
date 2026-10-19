@@ -1,5 +1,11 @@
 # Changelog
 
+## v2026.6.15-armv7.2
+
+- Add experimental Linux ARMv7 hard-float support (`armv7-unknown-linux-gnueabihf`), including a bundled CR-SQLite extension, a 32-bit SQLite restore locking fix, and release binaries.
+- Build the ARMv7 CR-SQLite extension from the same source tag as the existing supported extensions in the extension update workflow.
+- Full runtime validation on physical ARMv7 hardware, including agent startup, database operations, and replication, is still pending.
+
 ## v2026.6.15
 
 - **CLI:** `corrosion query/exec` commands now send the `Authorization: Bearer <token>` header when `api.authz.bearer-token` is configured, so they work against an authz-enabled API endpoint.
